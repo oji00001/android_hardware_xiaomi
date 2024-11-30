@@ -37,7 +37,12 @@ object EuiccDisabler {
 
     fun enableOrDisableEuicc(context: Context) {
         val pm = context.packageManager
-        val disable = EUICC_DEPENDENCIES.any { !isInstalledAndEnabled(pm, it) }
+        val disable = if (sku != "GL" && sku != "JP") {
+            Log.d(TAG, "Disabling apps due to non-GL/JP SKU")
+            true // Disable if SKU is not GL or JP
+        } else {
+            EUICC_DEPENDENCIES.any { !isInstalledAndEnabled(pm, it) }
+        }
         val flag = if (disable) {
             PackageManager.COMPONENT_ENABLED_STATE_DISABLED
         } else {
